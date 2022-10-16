@@ -1,0 +1,22 @@
+stages:
+  final_preprocess_data:
+    cmd: python src/data/make_dataset.py data/raw/train.csv data/processed/train.pkl
+      data/processed/target.pkl
+    deps:
+    - data/raw
+    outs:
+    - data/processed
+  train_catboost:
+    cmd: python src/models/train_model.py data/processed/train.pkl data/processed/target.pkl
+      catboost models
+    deps:
+    - data/processed
+    outs:
+    - models
+  evaluate:
+    cmd: python src/models/predict_model.py 'models' 'data/processed/test.pkl' 'catboost'
+      catboost models
+    deps:
+    - models
+    outs:
+    - submission_file_catboost.csv
